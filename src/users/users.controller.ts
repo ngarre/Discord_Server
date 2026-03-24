@@ -7,7 +7,8 @@ import {
     Param,
     HttpCode,
     HttpStatus,
-    Body
+    Body,
+    ParseUUIDPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
@@ -31,7 +32,7 @@ export class UsersController {
     }
 
     @Get(':id')
-    async findOne(@Param('id') id: string) {
+    async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
         const user = await this.usersService.findById(id);
         const { password, ...result } = user;
         return result;
@@ -39,7 +40,7 @@ export class UsersController {
 
     @Patch(':id')
     async update(
-        @Param('id') id: string,
+        @Param('id', new ParseUUIDPipe()) id: string,
         @Body() dto: UpdateUserDto,
     ) {
         const updated = await this.usersService.update(id, dto);
@@ -49,7 +50,7 @@ export class UsersController {
 
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
-    async delete(@Param('id') id: string): Promise<void> {
+    async delete(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
         await this.usersService.delete(id);
     }
 }
