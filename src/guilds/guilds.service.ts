@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateGuildDto } from './dto/create-guild.dto.js';
 import { UpdateGuildDto } from './dto/update-guild.dto.js';
+import { MemberRole } from '@prisma/client';
 
 @Injectable()
 export class GuildsService {
@@ -11,8 +12,12 @@ export class GuildsService {
     return this.prisma.guild.create({
       data: {
         name: dto.name,
-        ownerId: dto.ownerId // Importante poner en el JSON el ID de un usuario que exista en la BBDD
+        ownerId: dto.ownerId,
+         members: {
+          create: { userId: dto.ownerId, role: MemberRole.OWNER },
+        },
       },
+       include: { members: true },
     });
   }
 

@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
+import { CreateUserDto } from './dto/create-user.dto.js';
 
 @Injectable()
 export class UsersService {
@@ -14,8 +15,11 @@ export class UsersService {
 
     async update(id: string, dto: UpdateUserDto) {
         const data: Record<string, string> = {};
+
+        
         if (dto.username) data.username = dto.username;
         if (dto.password) data.password = dto.password;
+
         return this.prisma.user.update({ where: { id }, data });
     }
 
@@ -23,9 +27,27 @@ export class UsersService {
         return this.prisma.user.findUnique({ where: { email } });
     }
 
-    async create(data: { email: string; username: string; password: string }) {
-        return this.prisma.user.create({ data });
+    async findByUsername(username: string) {
+        return this.prisma.user.findUnique({
+            where: { username },
+        });
     }
+
+    async create(dto: CreateUserDto) {
+    const existingEmail = await this.findByEmail(dto.email);
+    if (existingEmail) {
+        throw new ConflictException('Email already in use');
+    }
+
+    const existingUsername = await this.findByUsername(dto.username);
+    if (existingUsername) {
+        throw new ConflictException('Username already in use');
+    }
+
+    return this.prisma.user.create({
+        data: dto,
+    });
+}
 
     async findAll() {
         return this.prisma.user.findMany();
@@ -34,5 +56,6 @@ export class UsersService {
     async delete(id: string) {
         return this.prisma.user.delete({ where: { id } });
     }
+
 }
 
