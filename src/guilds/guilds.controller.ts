@@ -1,11 +1,14 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body } from '@nestjs/common';
+import {
+  Controller, Get, Post, Patch, Delete, Param, Body, HttpCode,
+  HttpStatus
+} from '@nestjs/common';
 import { GuildsService } from './guilds.service.js';
 import { CreateGuildDto } from './dto/create-guild.dto.js';
 import { UpdateGuildDto } from './dto/update-guild.dto.js';
 
 @Controller('guilds')
 export class GuildsController {
-  constructor(private guildsService: GuildsService) {}
+  constructor(private guildsService: GuildsService) { }
 
   @Post()
   create(@Body() dto: CreateGuildDto) {
@@ -28,6 +31,7 @@ export class GuildsController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
     return this.guildsService.remove(id);
   }
