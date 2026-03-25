@@ -1,11 +1,22 @@
 import {
-  Controller, Get, Post, Patch, Delete, Param, Body, HttpCode,
-  HttpStatus, ParseUUIDPipe,
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  HttpCode,
+  HttpStatus,
+  ParseUUIDPipe
 } from '@nestjs/common';
 import { GuildsService } from './guilds.service.js';
 import { CreateGuildDto } from './dto/create-guild.dto.js';
 import { UpdateGuildDto } from './dto/update-guild.dto.js';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 
+@UseGuards(JwtAuthGuard)
 @Controller('guilds')
 export class GuildsController {
   constructor(private guildsService: GuildsService) { }

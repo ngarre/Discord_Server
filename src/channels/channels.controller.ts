@@ -1,11 +1,22 @@
 import {
-  Controller, Get, Post, Body, Patch, Param, Delete, HttpCode,
-  HttpStatus, ParseUUIDPipe,
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { ChannelsService } from './channels.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 
+@UseGuards(JwtAuthGuard)
 @Controller('channels')
 export class ChannelsController {
   constructor(private readonly channelsService: ChannelsService) { }

@@ -13,11 +13,16 @@ import {
 import { UsersService } from './users.service.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
     constructor(private usersService: UsersService) { }
 
+
+    // Este POST lo pongo sólo por tener el CRUD completo, pero con lo de auth realmente ya estaría cubierto.
     @Post()
     async create(@Body() dto: CreateUserDto) {
         const user = await this.usersService.create(dto);
