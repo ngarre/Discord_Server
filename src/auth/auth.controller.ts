@@ -1,9 +1,12 @@
-import { Controller, Post, Body, Get, UseGuards, Req  } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards, Req } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
+
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) { }
@@ -19,6 +22,7 @@ export class AuthController {
     }
 
     @Get('me')
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
     me(@Req() req: any) {
         return req.user;
