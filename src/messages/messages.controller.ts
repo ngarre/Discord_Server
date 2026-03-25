@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseUUIDPipe, } from '@nestjs/common';
 import { MessagesService } from './messages.service.js';
 import { CreateMessageDto } from './dto/create-message.dto.js';
 
@@ -12,7 +12,7 @@ export class MessagesController {
   }
 
   @Get('channel/:channelId')
-  findByChannel(@Param('channelId') channelId: string) {
+  findByChannel(@Param('channelId', new ParseUUIDPipe()) channelId: string) {
     return this.messagesService.findByChannel(channelId);
   }
 }

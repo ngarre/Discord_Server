@@ -1,6 +1,6 @@
 import {
   Controller, Get, Post, Patch, Delete, Param, Body, HttpCode,
-  HttpStatus
+  HttpStatus, ParseUUIDPipe,
 } from '@nestjs/common';
 import { GuildsService } from './guilds.service.js';
 import { CreateGuildDto } from './dto/create-guild.dto.js';
@@ -21,18 +21,20 @@ export class GuildsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.guildsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateGuildDto) {
+  update(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() dto: UpdateGuildDto) {
     return this.guildsService.update(id, dto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
+  remove(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.guildsService.remove(id);
   }
 }
