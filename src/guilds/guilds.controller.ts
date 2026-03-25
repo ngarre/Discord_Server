@@ -15,10 +15,11 @@ import { CreateGuildDto } from './dto/create-guild.dto.js';
 import { UpdateGuildDto } from './dto/update-guild.dto.js';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('Guilds')
+@ApiBearerAuth()
 @Controller('guilds')
 export class GuildsController {
   constructor(private guildsService: GuildsService) { }

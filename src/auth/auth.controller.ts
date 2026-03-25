@@ -3,7 +3,7 @@ import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
 
 @ApiTags('Auth')
@@ -22,6 +22,7 @@ export class AuthController {
     }
 
     @Get('me')
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
     me(@Req() req: any) {
         return req.user;
