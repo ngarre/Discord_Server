@@ -15,8 +15,11 @@ import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
+import { ApiTags } from '@nestjs/swagger';
+
 
 @UseGuards(JwtAuthGuard)
+@ApiTags('Channels')
 @Controller('channels')
 export class ChannelsController {
   constructor(private readonly channelsService: ChannelsService) { }
