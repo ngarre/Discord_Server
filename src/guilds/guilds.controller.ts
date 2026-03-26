@@ -8,14 +8,15 @@ import {
   Body,
   HttpCode,
   HttpStatus,
-  ParseUUIDPipe
+  ParseUUIDPipe,
+  UseGuards
 } from '@nestjs/common';
-import { GuildsService } from './guilds.service.js';
-import { CreateGuildDto } from './dto/create-guild.dto.js';
-import { UpdateGuildDto } from './dto/update-guild.dto.js';
-import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
+import { GuildsService } from './guilds.service';
+import { CreateGuildDto } from './dto/create-guild.dto';
+import { UpdateGuildDto } from './dto/update-guild.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('Guilds')
@@ -25,8 +26,8 @@ export class GuildsController {
   constructor(private guildsService: GuildsService) { }
 
   @Post()
-  create(@Body() dto: CreateGuildDto) {
-    return this.guildsService.create(dto);
+  create(@Body() dto: CreateGuildDto, @CurrentUser() user: { id: string }) {
+    return this.guildsService.create(dto, user.id);
   }
 
   @Get()

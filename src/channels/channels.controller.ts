@@ -9,11 +9,11 @@ import {
   HttpCode,
   HttpStatus,
   ParseUUIDPipe,
+  UseGuards
 } from '@nestjs/common';
 import { ChannelsService } from './channels.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
-import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
