@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ChannelsService {

@@ -1,23 +1,23 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service.js';
-import { CreateGuildDto } from './dto/create-guild.dto.js';
-import { UpdateGuildDto } from './dto/update-guild.dto.js';
+import { PrismaService } from '../prisma/prisma.service';
+import { CreateGuildDto } from './dto/create-guild.dto';
+import { UpdateGuildDto } from './dto/update-guild.dto';
 import { MemberRole } from '@prisma/client';
 
 @Injectable()
 export class GuildsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(dto: CreateGuildDto) {
+ async create(dto: CreateGuildDto, ownerId: string) {
     return this.prisma.guild.create({
       data: {
         name: dto.name,
-        ownerId: dto.ownerId,
-         members: {
-          create: { userId: dto.ownerId, role: MemberRole.OWNER },
+        ownerId,
+        members: {
+          create: { userId: ownerId, role: MemberRole.OWNER },
         },
       },
-       include: { members: true },
+      include: { members: true },
     });
   }
 

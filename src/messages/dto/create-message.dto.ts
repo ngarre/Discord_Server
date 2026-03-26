@@ -9,8 +9,4 @@ export class CreateMessageDto {
     @ApiProperty({ example: 'uuid-of-channel' })
     @IsUUID()
     channelId: string;
-
-    @ApiProperty({ example: 'uuid-of-user' })
-    @IsUUID()
-    authorId: string;
 }

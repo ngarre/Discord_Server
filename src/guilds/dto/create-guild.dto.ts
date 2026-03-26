@@ -7,7 +7,4 @@ export class CreateGuildDto {
   @MinLength(1)
   @MaxLength(100)
   name: string;
-
-  @IsUUID()
-  ownerId: string;
 }
