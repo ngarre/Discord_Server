@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { EncryptionService } from '../common/services/encryption.service';
+import { MemberRole } from '@prisma/client';
 
 
 @Injectable()
@@ -11,9 +12,26 @@ export class ChannelsService {
     private encryptionService: EncryptionService,
   ) { }
 
-  async create(dto: CreateChannelDto) {
+  async create(dto: CreateChannelDto, userId: string) {
     const rawKey = this.encryptionService.generateKey();
     const wrappedKey = this.encryptionService.wrapKey(rawKey);
+
+    const membership = await this.prisma.guildMember.findUnique({
+      where: {
+        userId_guildId: {
+          userId,
+          guildId: dto.guildId,
+        },
+      },
+    });
+
+    if (!membership) {
+      throw new ForbiddenException('You do not belong to this server');
+    }
+
+    if (membership.role !== MemberRole.OWNER) {
+      throw new ForbiddenException('Only owner can create channels');
+    }
 
     return this.prisma.channel.create({
       data: {
