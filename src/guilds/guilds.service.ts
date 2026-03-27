@@ -110,6 +110,10 @@ export class GuildsService {
       throw new NotFoundException('The user is not registered on this server');
     }
 
+    if (membership.role === MemberRole.OWNER) {
+      throw new BadRequestException('Owner role cannot be modified');
+    }
+
     return this.prisma.guildMember.update({
       where: {
         userId_guildId: {
