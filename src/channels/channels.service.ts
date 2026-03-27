@@ -2,18 +2,25 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { EncryptionService } from '../common/services/encryption.service';
+
 
 @Injectable()
 export class ChannelsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService,
+    private encryptionService: EncryptionService,
+  ) { }
 
   async create(dto: CreateChannelDto) {
+    const rawKey = this.encryptionService.generateKey();
+    const wrappedKey = this.encryptionService.wrapKey(rawKey);
+
     return this.prisma.channel.create({
       data: {
         name: dto.name,
         type: dto.type,
         guildId: dto.guildId,
-        encryptionKey: 'TEMP_KEY',
+        encryptionKey: wrappedKey,
       },
     });
   }
@@ -22,7 +29,7 @@ export class ChannelsService {
     return this.prisma.channel.findMany();
   }
 
-   async findOne(id: string) {
+  async findOne(id: string) {
     const channel = await this.prisma.channel.findUnique({
       where: { id },
     });
