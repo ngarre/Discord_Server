@@ -15,7 +15,7 @@ import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('Users')
@@ -27,6 +27,7 @@ export class UsersController {
 
     // Este POST lo pongo sólo por tener el CRUD completo, pero con lo de auth realmente ya estaría cubierto.
     @Post()
+    @ApiOperation({ summary: 'Create a new user (for CRUD purposes)' })
     async create(@Body() dto: CreateUserDto) {
         const user = await this.usersService.create(dto);
         const { password, ...result } = user;
@@ -34,12 +35,14 @@ export class UsersController {
     }
 
     @Get()
+    @ApiOperation({ summary: 'Get all users' })
     async findAll() {
         const users = await this.usersService.findAll();
         return users.map(({ password, ...user }) => user);
     }
 
     @Get(':id')
+    @ApiOperation({ summary: 'Get a user by id' })
     async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
         const user = await this.usersService.findById(id);
         const { password, ...result } = user;
@@ -47,6 +50,7 @@ export class UsersController {
     }
 
     @Patch(':id')
+    @ApiOperation({ summary: 'Update a user by id' })
     async update(
         @Param('id', new ParseUUIDPipe()) id: string,
         @Body() dto: UpdateUserDto,
@@ -57,6 +61,7 @@ export class UsersController {
     }
 
     @Delete(':id')
+    @ApiOperation({ summary: 'Delete a user by id' })
     @HttpCode(HttpStatus.NO_CONTENT)
     async delete(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
         await this.usersService.delete(id);

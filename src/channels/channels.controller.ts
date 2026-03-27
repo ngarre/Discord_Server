@@ -15,10 +15,11 @@ import { ChannelsService } from './channels.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { MemberRole } from '@prisma/client';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 
 @UseGuards(JwtAuthGuard)
@@ -29,24 +30,34 @@ export class ChannelsController {
   constructor(private readonly channelsService: ChannelsService) { }
 
   @Post()
-  create(@Body() dto: CreateChannelDto) {
-    return this.channelsService.create(dto);
+  @ApiOperation({ summary: 'Create a new channel in a guild (OWNER only)' })
+  create(
+    @Body() dto: CreateChannelDto,
+    @CurrentUser() user: { id: string },
+  ) {
+    return this.channelsService.create(dto, user.id);
   }
 
   @Get()
+  @ApiOperation({ summary: 'Get all channels' })
   findAll() {
     return this.channelsService.findAll();
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get a channel by id' })
   findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.channelsService.findOne(id);
   }
 
   @Patch(':id')
+  @UseGuards(RolesGuard)
+  @Roles(MemberRole.OWNER)
+  @ApiOperation({ summary: 'Update a channel by id (OWNER only)' })
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() dto: UpdateChannelDto) {
+    @Body() dto: UpdateChannelDto,
+  ) {
     return this.channelsService.update(id, dto);
   }
 
@@ -54,6 +65,7 @@ export class ChannelsController {
   @UseGuards(RolesGuard)
   @Roles(MemberRole.OWNER)
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Delete a channel by id (OWNER only)' })
   remove(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.channelsService.remove(id);
   }
