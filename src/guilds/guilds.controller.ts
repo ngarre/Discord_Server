@@ -21,6 +21,7 @@ import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { AddGuildMemberDto } from './dto/add-guild-member.dto';
 import { MemberRole } from '@prisma/client';
+import { UpdateGuildMemberRoleDto } from './dto/update-guild-member-role.dto';
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('Guilds')
@@ -59,6 +60,17 @@ export class GuildsController {
     @Body() dto: AddGuildMemberDto,
   ) {
     return this.guildsService.addMember(guildId, dto.userId, dto.role);
+  }
+
+  @Patch(':guildId/members/:userId/role')
+  @UseGuards(RolesGuard)
+  @Roles(MemberRole.OWNER)
+  updateMemberRole(
+    @Param('guildId', new ParseUUIDPipe()) guildId: string,
+    @Param('userId', new ParseUUIDPipe()) userId: string,
+    @Body() dto: UpdateGuildMemberRoleDto,
+  ) {
+    return this.guildsService.updateMemberRole(guildId, userId, dto.role);
   }
 
   @Delete(':id')

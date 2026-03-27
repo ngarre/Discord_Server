@@ -61,7 +61,7 @@ export class GuildsService {
     });
 
     if (!user) {
-      throw new NotFoundException('Usuario no encontrado');
+      throw new NotFoundException('User not found');
     }
 
     // 2. comprobar que no está ya en el guild
@@ -75,7 +75,7 @@ export class GuildsService {
     });
 
     if (existingMembership) {
-      throw new BadRequestException('El usuario ya pertenece a este servidor');
+      throw new BadRequestException('The user is already registered on this server');
     }
 
     // 3. crear membership
@@ -83,6 +83,34 @@ export class GuildsService {
       data: {
         userId,
         guildId,
+        role,
+      },
+    });
+  }
+
+  // Método para actualizar el rol de un usuario dentro del guild
+  async updateMemberRole(guildId: string, userId: string, role: MemberRole) {
+    const membership = await this.prisma.guildMember.findUnique({
+      where: {
+        userId_guildId: {
+          userId,
+          guildId,
+        },
+      },
+    });
+
+    if (!membership) {
+      throw new NotFoundException('The user is not registered on this server');
+    }
+
+    return this.prisma.guildMember.update({
+      where: {
+        userId_guildId: {
+          userId,
+          guildId,
+        },
+      },
+      data: {
         role,
       },
     });

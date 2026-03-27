@@ -49,7 +49,7 @@ export class RolesGuard implements CanActivate {
 
             guildId = channel.guildId;
         } else if (originalUrl.includes('/guilds/')) {
-            guildId = request.params.id;
+            guildId = request.params.guildId || request.params.id;
         } else {
             throw new ForbiddenException('The server could not be identified');
         }
