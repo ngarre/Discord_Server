@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateGuildDto } from './dto/create-guild.dto';
 import { UpdateGuildDto } from './dto/update-guild.dto';
@@ -6,9 +6,9 @@ import { MemberRole } from '@prisma/client';
 
 @Injectable()
 export class GuildsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
- async create(dto: CreateGuildDto, ownerId: string) {
+  async create(dto: CreateGuildDto, ownerId: string) {
     return this.prisma.guild.create({
       data: {
         name: dto.name,
@@ -49,6 +49,77 @@ export class GuildsService {
 
     return this.prisma.guild.delete({
       where: { id },
+    });
+  }
+
+
+  // Método para que owner añada nuevo miembro a su servidor
+  async addMember(guildId: string, userId: string, role: MemberRole) {
+    if (role === MemberRole.OWNER) {
+      throw new BadRequestException('Cannot assign OWNER role');
+    }
+    // 1. comprobar que el usuario existe
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // 2. comprobar que no está ya en el guild
+    const existingMembership = await this.prisma.guildMember.findUnique({
+      where: {
+        userId_guildId: {
+          userId,
+          guildId,
+        },
+      },
+    });
+
+    if (existingMembership) {
+      throw new BadRequestException('The user is already registered on this server');
+    }
+
+    // 3. crear membership
+    return this.prisma.guildMember.create({
+      data: {
+        userId,
+        guildId,
+        role,
+      },
+    });
+  }
+
+  // Método para actualizar el rol de un usuario dentro del guild
+  async updateMemberRole(guildId: string, userId: string, role: MemberRole) {
+    if (role === MemberRole.OWNER) {
+      throw new BadRequestException('Cannot assign OWNER role');
+    }
+
+    const membership = await this.prisma.guildMember.findUnique({
+      where: {
+        userId_guildId: {
+          userId,
+          guildId,
+        },
+      },
+    });
+
+    if (!membership) {
+      throw new NotFoundException('The user is not registered on this server');
+    }
+
+    return this.prisma.guildMember.update({
+      where: {
+        userId_guildId: {
+          userId,
+          guildId,
+        },
+      },
+      data: {
+        role,
+      },
     });
   }
 }
