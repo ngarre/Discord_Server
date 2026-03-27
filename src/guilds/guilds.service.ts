@@ -55,6 +55,9 @@ export class GuildsService {
 
   // Método para que owner añada nuevo miembro a su servidor
   async addMember(guildId: string, userId: string, role: MemberRole) {
+    if (role === MemberRole.OWNER) {
+      throw new BadRequestException('Cannot assign OWNER role');
+    }
     // 1. comprobar que el usuario existe
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -90,6 +93,10 @@ export class GuildsService {
 
   // Método para actualizar el rol de un usuario dentro del guild
   async updateMemberRole(guildId: string, userId: string, role: MemberRole) {
+    if (role === MemberRole.OWNER) {
+      throw new BadRequestException('Cannot assign OWNER role');
+    }
+
     const membership = await this.prisma.guildMember.findUnique({
       where: {
         userId_guildId: {
