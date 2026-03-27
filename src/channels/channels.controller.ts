@@ -14,8 +14,11 @@ import {
 import { ChannelsService } from './channels.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { MemberRole } from '@prisma/client';
 
 
 @UseGuards(JwtAuthGuard)
@@ -48,6 +51,8 @@ export class ChannelsController {
   }
 
   @Delete(':id')
+  @UseGuards(RolesGuard)
+  @Roles(MemberRole.OWNER)
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.channelsService.remove(id);
