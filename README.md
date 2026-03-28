@@ -98,7 +98,6 @@ npx prisma migrate deploy
 
 En Docker, se ejecutan automáticamente al iniciar la aplicación.
 
----
 
 ##  Docker
 
@@ -177,14 +176,6 @@ La API está documentada con Swagger:
 * Uso de migraciones para consistencia de Base de Datos
 * Docker para reproducibilidad del entorno
 
-
-##  Autora
-
-**Natalia Garré Ramo*** 
-
-Proyecto desarrollado como parte de la asignatura de **Servicios y Procesos** del Grado Superior de Desarrollo de Aplicaciones Multiplataforma.
-
-
 ##  Conclusión
 
 Este proyecto implementa una API completa, segura y estructurada, aplicando buenas prácticas de desarrollo backend:
@@ -195,5 +186,15 @@ Este proyecto implementa una API completa, segura y estructurada, aplicando buen
 * testing
 * documentación
 * contenerización
+
+
+##  Autora
+
+**Natalia Garré Ramo** 
+
+Proyecto desarrollado como parte de la asignatura de **Servicios y Procesos** del Grado Superior de Desarrollo de Aplicaciones Multiplataforma.
+
+
+
 
 
