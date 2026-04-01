@@ -2,11 +2,11 @@ import { Controller, Post, Body, Get, UseGuards, Req } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard'; // Guard que protege rutas con JWT
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 
 
-@ApiTags('Auth')
+@ApiTags('Auth') // Hace que estos endpoints salgan agrupados en Swagger bajo la sección Auth
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) { }

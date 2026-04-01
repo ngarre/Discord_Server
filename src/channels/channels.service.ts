@@ -8,15 +8,16 @@ import { MemberRole } from '@prisma/client';
 
 @Injectable()
 export class ChannelsService {
-  constructor(private prisma: PrismaService,
-    private encryptionService: EncryptionService,
+  constructor(private prisma: PrismaService, // Dependencia para acceder a la base de datos a través de Prisma
+    private encryptionService: EncryptionService, // Dependencia propia para manejar la generación y envoltura de claves de cifrado
   ) { }
 
-  async create(dto: CreateChannelDto, userId: string) {
-    const rawKey = this.encryptionService.generateKey();
-    const wrappedKey = this.encryptionService.wrapKey(rawKey);
+  // CREATE: Solo el OWNER de la guild a la que pertenece el canal puede crear un canal
+  async create(dto: CreateChannelDto, userId: string) { // El guildId se obtiene del DTO, por eso no puedo utilizar mi RoleGuard para esta ruta
+    const rawKey = this.encryptionService.generateKey(); // Genera una clave de cifrado aleatoria para el canal
+    const wrappedKey = this.encryptionService.wrapKey(rawKey); // Envuelve la clave de cifrado para almacenarla de forma segura en la base de datos
 
-    const membership = await this.prisma.guildMember.findUnique({
+    const membership = await this.prisma.guildMember.findUnique({ // Verifica que el usuario que intenta crear el canal pertenece a la guild 
       where: {
         userId_guildId: {
           userId,
