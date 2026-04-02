@@ -46,15 +46,15 @@ export class UsersService {
             throw new ConflictException('Username already in use');
         }
 
-        // Hashea la contraseña antes de guardarla en la base de datos
-        const hashedPassword = await bcrypt.hash(dto.password, 10);
+        // Hashea la contraseña antes de guardarla en la base de datos --> Sobra porque la contraseña ya viene hasheada desde AuthService, pero lo dejo por si se quiere usar este método para crear usuarios desde otro sitio que no sea AuthService.
+        // const hashedPassword = await bcrypt.hash(dto.password, 10);
 
         // Crea el usuario con la contraseña hasheada
         return this.prisma.user.create({
             data: {
                 email: dto.email,
                 username: dto.username,
-                password: hashedPassword,
+                password: dto.password, // ya viene hasheada desde AuthService, así que se guarda directamente. Si se quisiera hashear aquí, sería: password: hashedPassword
             },
         });
     }

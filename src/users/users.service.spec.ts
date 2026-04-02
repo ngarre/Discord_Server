@@ -45,15 +45,15 @@ describe('UsersService', () => {
       .mockResolvedValueOnce(null)
       .mockResolvedValueOnce(null);
 
-    // Simulamos el resultado del hash
-    (bcrypt.hash as jest.Mock).mockResolvedValue('hashed-password');
+    // Simulamos el resultado del hash --> Sobra porque la contraseña ya viene hasheada desde AuthService, pero lo dejo por si se quiere usar este método para crear usuarios desde otro sitio que no sea AuthService.
+    // (bcrypt.hash as jest.Mock).mockResolvedValue('hashed-password');
 
     // Simulamos el usuario creado en Prisma
     mockPrisma.user.create.mockResolvedValue({
       id: '1',
       email: 'test@test.com',
       username: 'testuser',
-      password: 'hashed-password',
+      password: '123456',
     });
 
     // Llamamos al método create del servicio real con un DTO de ejemplo
@@ -64,19 +64,19 @@ describe('UsersService', () => {
     });
 
     // Comprueba que bcrypt se llamó con la password original
-    expect(bcrypt.hash).toHaveBeenCalledWith('123456', 10);
+    // expect(bcrypt.hash).toHaveBeenCalledWith('123456', 10);
 
     // Comprueba que Prisma crea el usuario con la password hasheada
     expect(mockPrisma.user.create).toHaveBeenCalledWith({
       data: {
         email: 'test@test.com',
         username: 'testuser',
-        password: 'hashed-password',
+        password: '123456',
       },
     });
 
     expect(result.email).toBe('test@test.com'); // Comprueba que el resultado tiene el email correcto
-    expect(result.password).toBe('hashed-password'); // Comprueba que el resultado tiene la contraseña hasheada (no la original)
+    expect(result.password).toBe('123456'); // Comprueba que el resultado tiene la contraseña hasheada (no la original)
   });
 
   // TEST 2: lanza conflicto si el email ya existe
