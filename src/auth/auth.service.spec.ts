@@ -7,7 +7,7 @@ import { ConflictException, UnauthorizedException } from '@nestjs/common';
 
 
 describe('AuthService', () => { // Agrupa todos los tests relacionados con AuthService
-    let service: AuthService; // Variable donde guardaremos la instancia del servicio a probar
+    let service: AuthService; // declaramos una variable de tipo AuthService y su valor se asignará en el beforeEach
 
     const mockUsersService = { // Objeto mock que sustituye al UsersService real
         findByEmail: jest.fn(), // Función falsa para simular la búsqueda de usuario por email
@@ -35,8 +35,7 @@ describe('AuthService', () => { // Agrupa todos los tests relacionados con AuthS
             ],
         }).compile(); // Compila el módulo para dejarlo listo para usarse en los tests
 
-        service = module.get<AuthService>(AuthService); // Obtiene la instancia de AuthService del módulo de pruebas
-
+        service = module.get<AuthService>(AuthService); // Obtiene la instancia de AuthService del módulo de pruebas, <AuthService> sirve para que TypeScript sepa de qué tipo es la instancia que estamos obteniendo
 
         jest.clearAllMocks(); // Limpia llamadas y valores anteriores de los mocks antes de cada test
     });
@@ -117,23 +116,23 @@ describe('AuthService', () => { // Agrupa todos los tests relacionados con AuthS
             id: '123',
             email: 'test@test.com',
             username: 'testuser',
-            password: await bcrypt.hash('123456', 10),
+            password: await bcrypt.hash('123456', 10), // Contraseña hasheada simulada para que coincida con la contraseña que se le pasará al login (123456)
         });
 
         mockJwtService.sign.mockReturnValue('fake-jwt-token');
 
         const result = await service.login({
             email: 'test@test.com',
-            password: '123456',
+            password: '123456', // Contraseña en texto plano que se le pasa al login, el servicio la comparará con la contraseña hasheada del mockUsersService
         });
 
-        expect(mockJwtService.sign).toHaveBeenCalledWith({
+        expect(mockJwtService.sign).toHaveBeenCalledWith({ // Comprueba que el token se genera con el payload correcto al hacer login
             sub: '123',
             email: 'test@test.com',
             username: 'testuser',
         });
 
-        expect(result).toEqual({
+        expect(result).toEqual({ // Comprueba que el resultado del login es el esperado, es decir, que devuelve el token generado
             access_token: 'fake-jwt-token',
         });
     });

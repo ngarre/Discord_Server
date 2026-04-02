@@ -15,10 +15,10 @@ describe('ChannelsService', () => {
     },
     channel: {
       create: jest.fn(),
-      findMany: jest.fn(),
+      findMany: jest.fn(), // no se usa en los tests actuales pero lo dejamos por si se necesita
       findUnique: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
+      update: jest.fn(), // no se usa en los tests actuales pero lo dejamos por si se necesita
+      delete: jest.fn(), // no se usa en los tests actuales pero lo dejamos por si se necesita
     },
   };
 
