@@ -79,21 +79,21 @@ export class UsersService {
             if (existingUsername && existingUsername.id !== id) {
                 throw new ConflictException('Username already in use');
             }
-
-            // Construye el objeto final que se enviará a Prisma.
-            // Solo añade los campos presentes en el DTO.
-            // Si llega password, se hashea antes de guardarla.
-            return this.prisma.user.update({
-                where: { id },
-                data: {
-                    // Si el DTO incluye username, se añade al objeto data. Si no, no se añade (gracias a los tres puntos).
-                    ...(dto.username && { username: dto.username }),
-                    ...(dto.password && {
-                        password: await bcrypt.hash(dto.password, 10), // Si se quiere actualizar la contraseña, se hashea antes de guardarla
-                    }),
-                },
-            });
         }
+
+        // Construye el objeto final que se enviará a Prisma.
+        // Solo añade los campos presentes en el DTO.
+        // Si llega password, se hashea antes de guardarla.
+        return this.prisma.user.update({
+            where: { id },
+            data: {
+                // Si el DTO incluye username, se añade al objeto data. Si no, no se añade (gracias a los tres puntos).
+                ...(dto.username && { username: dto.username }),
+                ...(dto.password && {
+                    password: await bcrypt.hash(dto.password, 10), // Si se quiere actualizar la contraseña, se hashea antes de guardarla
+                }),
+            },
+        });
 
     }
 
@@ -101,7 +101,7 @@ export class UsersService {
     async delete(id: string) {
         // Comprueba antes que el usuario exista
         await this.findById(id);
-        
+
         return this.prisma.user.delete({
             where: { id },
         });
