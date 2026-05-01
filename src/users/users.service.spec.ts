@@ -37,7 +37,7 @@ describe('UsersService', () => {
     jest.clearAllMocks();
   });
 
-  // TEST 1: crea correctamente un usuario, comprobando duplicados y hasheando password
+  // TEST 1: crea correctamente un usuario, comprobando duplicados
   it('should create a user successfully', async () => {
     // Primera llamada a findUnique -> búsqueda por email
     // Segunda llamada a findUnique -> búsqueda por username
@@ -45,10 +45,8 @@ describe('UsersService', () => {
       .mockResolvedValueOnce(null)
       .mockResolvedValueOnce(null);
 
-    // Simulamos el resultado del hash --> Sobra porque la contraseña ya viene hasheada desde AuthService, pero lo dejo por si se quiere usar este método para crear usuarios desde otro sitio que no sea AuthService.
-    // (bcrypt.hash as jest.Mock).mockResolvedValue('hashed-password');
-
-    // Simulamos el usuario creado en Prisma
+    // Crea el usuario en la base de datos.
+    // En el flujo real de registro, la contraseña ya llega hasheada desde AuthService.
     mockPrisma.user.create.mockResolvedValue({
       id: '1',
       email: 'test@test.com',
