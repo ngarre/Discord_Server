@@ -114,6 +114,33 @@ La aplicación está completamente contenerizada.
 docker compose up --build
 ```
 
+## Modo desarrollo
+
+Para trabajar en local sin levantar el contenedor de la API, se puede arrancar solo PostgreSQL con Docker:
+
+```bash
+docker compose up -d postgres
+```
+
+En este modo, la API se ejecuta en local con:
+
+```bash
+npm run start:dev
+```
+
+Por eso, en el archivo `.env`, la conexión debe apuntar a `localhost`:
+
+```env
+DATABASE_URL="postgresql://discord:discord@localhost:5432/discord?schema=public"
+```
+
+Si la base de datos está recién creada o vacía, hay que aplicar las migraciones de Prisma para crear las tablas:
+
+```bash
+npx prisma migrate deploy
+```
+
+Si ya estaban aplicadas, Prisma indicará que no hay migraciones pendientes.
 
 ##  Acceso
 
