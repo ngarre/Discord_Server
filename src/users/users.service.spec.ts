@@ -45,6 +45,8 @@ describe('UsersService', () => {
       .mockResolvedValueOnce(null)
       .mockResolvedValueOnce(null);
 
+    // Simulamos el resultado del hash --> Sobra porque la contraseña ya viene hasheada desde AuthService, pero lo dejo por si se quiere usar este método para crear usuarios desde otro sitio que no sea AuthService.
+    // (bcrypt.hash as jest.Mock).mockResolvedValue('hashed-password');
 
     // Simulamos el usuario creado en Prisma
     mockPrisma.user.create.mockResolvedValue({
@@ -60,6 +62,9 @@ describe('UsersService', () => {
       username: 'testuser',
       password: '123456',
     });
+
+    // Comprueba que bcrypt se llamó con la password original
+    // expect(bcrypt.hash).toHaveBeenCalledWith('123456', 10);
 
     // Comprueba que Prisma crea el usuario con la password hasheada
     expect(mockPrisma.user.create).toHaveBeenCalledWith({

@@ -23,31 +23,35 @@ import { AddGuildMemberDto } from './dto/add-guild-member.dto';
 import { MemberRole } from '@prisma/client';
 import { UpdateGuildMemberRoleDto } from './dto/update-guild-member-role.dto';
 
-@UseGuards(JwtAuthGuard)
-@ApiTags('Guilds')
-@ApiBearerAuth()
-@Controller('guilds')
+@UseGuards(JwtAuthGuard) // Protege todo el controller con JWT
+@ApiTags('Guilds') // Etiqueta para Swagger
+@ApiBearerAuth() // Indica que se usa autenticación Bearer para Swagger
+@Controller('guilds') // Ruta base para este controller
 export class GuildsController {
   constructor(private guildsService: GuildsService) { }
 
+  // - CREAR UNA GUILD -
   @Post()
   @ApiOperation({ summary: 'Create a new guild (user becomes OWNER)' })
-  create(@Body() dto: CreateGuildDto, @CurrentUser() user: { id: string }) {
-    return this.guildsService.create(dto, user.id);
+  create(@Body() dto: CreateGuildDto, @CurrentUser() user: { id: string }) { 
+    return this.guildsService.create(dto, user.id); // El usuario autenticado se convierte en el OWNER de la guild creada
   }
 
+  // - OBTENER TODAS LAS GUILDS -
   @Get()
   @ApiOperation({ summary: 'Get all guilds' })
   findAll() {
     return this.guildsService.findAll();
   }
 
+  // - OBTENER UNA GUILD POR ID -
   @Get(':id')
   @ApiOperation({ summary: 'Get a guild by id' })
-  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+  findOne(@Param('id', new ParseUUIDPipe()) id: string) { // Valida que el id sea un UUID válido antes de llamar al servicio
     return this.guildsService.findOne(id);
   }
 
+  // - ACTUALIZAR UNA GUILD (SOLO OWNER) -
   @Patch(':id')
   @UseGuards(RolesGuard)
   @Roles(MemberRole.OWNER)
@@ -59,6 +63,7 @@ export class GuildsController {
     return this.guildsService.update(id, dto);
   }
 
+  // - AÑADIR UN MIEMBRO A UNA GUILD (SOLO OWNER) -
   @Post(':id/members')
   @UseGuards(RolesGuard)
   @Roles(MemberRole.OWNER)
@@ -70,6 +75,7 @@ export class GuildsController {
     return this.guildsService.addMember(guildId, dto.userId, dto.role);
   }
 
+  // ACTUALIZAR EL ROL DE UN MIEMBRO EN UNA GUILD (SOLO OWNER)
   @Patch(':guildId/members/:userId/role')
   @UseGuards(RolesGuard)
   @Roles(MemberRole.OWNER)
@@ -82,6 +88,7 @@ export class GuildsController {
     return this.guildsService.updateMemberRole(guildId, userId, dto.role);
   }
 
+  // - ELIMINAR UNA GUILD (SOLO OWNER) -
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles(MemberRole.OWNER)

@@ -1,4 +1,4 @@
-import { IsEmail, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsString, MinLength } from 'class-validator'; // Necesita de ValidationPipe en main.ts, para que estas reglas se apliquen a las peticiones entrantes
 import { ApiProperty } from '@nestjs/swagger';
 
 export class LoginDto {

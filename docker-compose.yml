@@ -1,33 +1,53 @@
-services:
+# Define los servicios/contenedores que formarán parte del sistema
+services: 
+
+  # Servicio de base de datos PostgreSQL
   postgres:
+    # usa imagen oficial de PostgreSQL 16 basada en Alpine
     image: postgres:16-alpine
+
+    # Variables de entorno para configurar usuario, contraseña y base de datos
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+
+    # Expone el puerto 5432 del contenedor al 5432 de la máquina host
     ports:
       - '5432:5432'
+    # Guarda los datos de PostgreSQL en un volumen persistente para evitar pérdida de datos al reiniciar el contenedor
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+    # Comprueba periódicamente si PostgreSQL está listo para aceptar conexiones
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
 
+  # Servicio de la aplicación NestJS
   app:
+    # Construye la imagen de la aplicación a partir del Dockerfile ubicado en el directorio actual
     build: .
+    # El puerto 3000 del contenedor se mapea al puerto 3000 de la máquina host para acceder a la aplicación desde el navegador
     ports:
       - '3000:3000'
+
+    # Variables de entorno necesarias para la aplicación
     environment:
       DATABASE_URL: "postgresql://discord:discord@postgres:5432/discord?schema=public"
       JWT_SECRET: ${JWT_SECRET}
       MASTER_KEY: ${MASTER_KEY}
       PORT: 3000
+    
+    # No arranca la app hasta que PostgreSQL esté realmente saludable
     depends_on:
       postgres:
         condition: service_healthy
+    # Reinicia automáticamente el contenedor en caso de fallo, a menos que se detenga manualmente
     restart: unless-stopped
 
+# Declara el volumen persistente usado por PostgreSQL
 volumes:
   pgdata:

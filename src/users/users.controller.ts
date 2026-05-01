@@ -30,7 +30,7 @@ export class UsersController {
     @ApiOperation({ summary: 'Create a new user (for CRUD purposes)' })
     async create(@Body() dto: CreateUserDto) {
         const user = await this.usersService.create(dto);
-        const { password, ...result } = user;
+        const { password, ...result } = user; // Desestructuro el objeto user para excluir el campo password del resultado que se devuelve al cliente
         return result;
     }
 
@@ -38,7 +38,7 @@ export class UsersController {
     @ApiOperation({ summary: 'Get all users' })
     async findAll() {
         const users = await this.usersService.findAll();
-        return users.map(({ password, ...user }) => user);
+        return users.map(({ password, ...user }) => user); // Desestructuro cada objeto user para excluir el campo password del resultado que se devuelve al cliente
     }
 
     @Get(':id')
