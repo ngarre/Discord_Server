@@ -141,12 +141,22 @@ MASTER_KEY=your-64-char-hex-key
 * En local (Prisma Studio) → usar `localhost`
 
 
+## Scripts disponibles
+
+| Comando | Descripción |
+|---|---|
+| `npm install` | Instala las dependencias del proyecto |
+| `npm run build` | Compila el proyecto y comprueba errores de build |
+| `npm run start:dev` | Levanta la aplicación en modo desarrollo |
+| `npm test` | Ejecuta los tests automatizados |
+
+
 ## Tests
 
 Se han implementado tests unitarios con Jest:
 
 ```bash
-npm run test
+npm test
 ```
 
 Cobertura sobre:
