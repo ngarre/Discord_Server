@@ -11,6 +11,8 @@ import { UsersModule } from '../users/users.module'; // Necesario para consultar
   imports: [ 
     UsersModule, // Auth depende del módulo de usuarios
     PassportModule, // Integra Passport con Nest
+    // Importo y configuro el módulo JWT.
+    // Esto hace que JwtService esté disponible dentro de AuthModule.
     JwtModule.registerAsync({
       imports: [ConfigModule], // Módulo de configuración
       inject: [ConfigService], // Servicio que se inyecta en la factory
